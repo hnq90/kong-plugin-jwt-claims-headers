@@ -2,6 +2,7 @@ local BasePlugin = require "kong.plugins.base_plugin"
 local responses = require "kong.tools.responses"
 local jwt_decoder = require "kong.plugins.jwt.jwt_parser"
 local req_set_header = ngx.req.set_header
+local ngx_re_gmatch = ngx.re.gmatch
 
 local JwtClaimsHeadersHandler = BasePlugin:extend()
 
@@ -14,8 +15,23 @@ local function retrieve_token(request, conf)
     end
   end
 
+  local x_authorization_header = request.get_headers()["x-authorization"]
   local authorization_header = request.get_headers()["authorization"]
-  if authorization_header then
+  if x_authorization_header then
+    local iterator, iter_err = ngx_re_gmatch(x_authorization_header, "\\s*[Bb]earer\\s+(.+)")
+    if not iterator then
+      return nil, iter_err
+    end
+
+    local m, err = iterator()
+    if err then
+      return nil, err
+    end
+
+    if m and #m > 0 then
+      return m[1]
+    end
+  elseif authorization_header then
     local iterator, iter_err = ngx_re_gmatch(authorization_header, "\\s*[Bb]earer\\s+(.+)")
     if not iterator then
       return nil, iter_err
@@ -56,7 +72,7 @@ function JwtClaimsHeadersHandler:access(conf)
 
   local claims = jwt.claims
   for claim_key,claim_value in pairs(claims) do
-    for _,claim_pattern in pairs(conf.claims_to_include) do      
+    for _,claim_pattern in pairs(conf.claims_to_include) do
       if string.match(claim_key, "^"..claim_pattern.."$") then
         req_set_header("X-"..claim_key, claim_value)
       end
