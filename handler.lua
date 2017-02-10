@@ -15,9 +15,25 @@ local function retrieve_token(request, conf)
     end
   end
 
+  local authorization_cookie = ngx.var.cookie_Authorization
   local x_authorization_header = request.get_headers()["x-authorization"]
   local authorization_header = request.get_headers()["authorization"]
-  if x_authorization_header then
+
+  if authorization_cookie then
+    local iterator, iter_err = ngx_re_gmatch(authorization_cookie, "\\s*[Bb]earer\\s+(.+)")
+    if not iterator then
+      return nil, iter_err
+    end
+
+    local m, err = iterator()
+    if err then
+      return nil, err
+    end
+
+    if m and #m > 0 then
+      return m[1]
+    end
+  elseif x_authorization_header then
     local iterator, iter_err = ngx_re_gmatch(x_authorization_header, "\\s*[Bb]earer\\s+(.+)")
     if not iterator then
       return nil, iter_err
