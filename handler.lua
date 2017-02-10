@@ -65,16 +65,18 @@ function JwtClaimsHeadersHandler:access(conf)
     return responses.send_HTTP_UNAUTHORIZED()
   end
 
-  local jwt, err = jwt_decoder:new(token)
-  if err and not continue_on_error then
-    return responses.send_HTTP_INTERNAL_SERVER_ERROR()
-  end
+  if token then
+    local jwt, err = jwt_decoder:new(token)
+    if err and not continue_on_error then
+      return responses.send_HTTP_INTERNAL_SERVER_ERROR()
+    end
 
-  local claims = jwt.claims
-  for claim_key,claim_value in pairs(claims) do
-    for _,claim_pattern in pairs(conf.claims_to_include) do
-      if string.match(claim_key, "^"..claim_pattern.."$") then
-        req_set_header("X-"..claim_key, claim_value)
+    local claims = jwt.claims
+    for claim_key,claim_value in pairs(claims) do
+      for _,claim_pattern in pairs(conf.claims_to_include) do
+        if string.match(claim_key, "^"..claim_pattern.."$") then
+          req_set_header("X-"..claim_key, claim_value)
+        end
       end
     end
   end
