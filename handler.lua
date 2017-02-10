@@ -71,6 +71,13 @@ function JwtClaimsHeadersHandler:access(conf)
       return responses.send_HTTP_INTERNAL_SERVER_ERROR()
     end
 
+    if conf.verify_exp then
+      local ok_claims, errors = jwt:verify_registered_claims({exp = 'exp'})
+      if not ok_claims then
+        return responses.send_HTTP_FORBIDDEN(errors)
+      end
+    end
+
     local claims = jwt.claims
     for claim_key,claim_value in pairs(claims) do
       for _,claim_pattern in pairs(conf.claims_to_include) do

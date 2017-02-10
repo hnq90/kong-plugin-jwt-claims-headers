@@ -36,7 +36,8 @@ curl -X POST http://localhost:8001/apis/29414666-6b91-430a-9ff0-50d691b03a45/plu
   --data "name=jwt-claims-headers" \
   --data "config.uri_param_names=jwt" \
   --data "config.claims_to_include=.*" \
-  --data "config.continue_on_error=true"
+  --data "config.continue_on_error=true" \
+  --data "confing.verify_exp=true"
 ```
 
 form parameter|required|description
@@ -45,4 +46,4 @@ form parameter|required|description
 `uri_param_names`|*optional*|A list of querystring parameters that Kong will inspect to retrieve JWTs. Defaults to `jwt`.
 `claims_to_include`|*required*|A list of claims that Kong will expose in request headers. Lua pattern expressions are valid, e.g., `kong-.*` will include `kong-id`, `kong-email`, etc. Defaults to `.*` (include all claims). 
 `continue_on_error`|*required*|Whether to send the request to the upstream service if a failure occurs (no JWT token present, error decoding, etc). Defaults to `true`.
-
+`verify_exp`|*optional*|Expiration Time Claim. Defaults to `false`.
