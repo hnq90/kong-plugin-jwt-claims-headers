@@ -43,7 +43,7 @@ curl -X POST http://localhost:8001/apis/29414666-6b91-430a-9ff0-50d691b03a45/plu
 form parameter|required|description
 ---|---|---
 `name`|*required*|The name of the plugin to use, in this case: `jwt-claims-headers`
-`uri_param_names`|*optional*|A list of querystring parameters that Kong will inspect to retrieve JWTs. Defaults to `jwt`.
-`claims_to_include`|*required*|A list of claims that Kong will expose in request headers. Lua pattern expressions are valid, e.g., `kong-.*` will include `kong-id`, `kong-email`, etc. Defaults to `.*` (include all claims). 
-`continue_on_error`|*required*|Whether to send the request to the upstream service if a failure occurs (no JWT token present, error decoding, etc). Defaults to `true`.
-`verify_exp`|*optional*|Expiration Time Claim. Defaults to `false`.
+`config.uri_param_names`|*optional*|A list of querystring parameters that Kong will inspect to retrieve JWTs. Defaults to `jwt`.
+`config.claims_to_include`|*required*|A list of claims that Kong will expose in request headers. Lua pattern expressions are valid, e.g., `kong-.*` will include `kong-id`, `kong-email`, etc. Defaults to `.*` (include all claims). 
+`config.continue_on_error`|*required*|Whether to send the request to the upstream service if a failure occurs (no JWT token present, error decoding, etc). Defaults to `true`.
+`config.verify_exp`|*optional*|Expiration Time Claim. Defaults to `false`.
