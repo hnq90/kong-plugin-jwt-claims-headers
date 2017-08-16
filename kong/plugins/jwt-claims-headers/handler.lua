@@ -7,7 +7,7 @@ local ngx_re_gmatch = ngx.re.gmatch
 
 local JwtClaimsHeadersHandler = BasePlugin:extend()
 
-JwtClaimsHeadersHandler.PRIORITY = 999
+JwtClaimsHeadersHandler.PRIORITY = 700 -- We should set it smaller than request-transformer plugin
 
 local function retrieve_token(request, conf)
   local uri_parameters = request.get_uri_args()
