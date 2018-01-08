@@ -1,7 +1,6 @@
 local BasePlugin = require "kong.plugins.base_plugin"
 local responses = require "kong.tools.responses"
 local jwt_decoder = require "kong.plugins.jwt-claims-headers.jwt_parser"
-local constants = require "kong.constants"
 local req_set_header = ngx.req.set_header
 local ngx_re_gmatch = ngx.re.gmatch
 
@@ -95,7 +94,7 @@ function JwtClaimsHeadersHandler:access(conf)
         return responses.send_HTTP_FORBIDDEN("Invalid algorithm")
       end
 
-      if not jwt:verify_signature(constants.CUSTOM.JWT_SECRET_KEY) then
+      if not jwt:verify_signature(os.getenv("KONG_JWT_SECRET_KEY")) then
         return responses.send_HTTP_FORBIDDEN("Invalid signature")
       end
 
