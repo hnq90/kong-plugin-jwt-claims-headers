@@ -94,7 +94,7 @@ function JwtClaimsHeadersHandler:access(conf)
         return responses.send_HTTP_FORBIDDEN("Invalid algorithm")
       end
 
-      if not jwt:verify_signature(os.getenv("KONG_JWT_SECRET_KEY")) then
+      if not jwt:verify_signature(conf.jwt_secret) then
         return responses.send_HTTP_FORBIDDEN("Invalid signature")
       end
 
